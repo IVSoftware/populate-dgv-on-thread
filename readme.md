@@ -1,6 +1,9 @@
-If you would be open to a simpler approach than using `BackgroundWorker` what I would suggest is making an `async` handler for the `textbox.TextChanged` event that takes note of the keystroke count going before awaiting a "cooling off" period for rapid typing. If the count is the same before and after awaiting this delay it indicates that typing is sufficiently stable to perform a query. I have mocked this out using `sqlit-net-pcl` for the sake of expediency. The DGV is bound to a `DataSource` that is a `BindingList<Game>`. The `OnLoad` override of `MainForm` initializes the `DataGridView`, then whatever database server you're using. The last thing is to subscribe to the `TextChanged` event and this is where all the where all the action takes place.
+If you would be open to a simpler approach than using `BackgroundWorker` what I would suggest is making an `async` handler for the `textbox.TextChanged` event that takes note of the keystroke count going before awaiting a "cooling off" period for rapid typing. If the count is the same before and after awaiting this delay it indicates that typing is sufficiently stable to perform a query.
 
-![screenshot]()
+![screenshot](https://github.com/IVSoftware/populate-dgv-on-thread/blob/master/populate_dgv_on_thread/Screenshots/screenshot.png)
+
+I have mocked this out using `sqlit-net-pcl` for the sake of expediency. The DGV is bound to a `DataSource` that is a `BindingList<Game>`. The `OnLoad` override of `MainForm` initializes the `DataGridView`, then whatever database server you're using. The last thing is to subscribe to the `TextChanged` event and this is where all the where all the action takes place.
+
 
 ```        
 protected override void OnLoad(EventArgs e)
