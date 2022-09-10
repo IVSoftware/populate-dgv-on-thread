@@ -20,7 +20,7 @@ int _queryCount = 0;
 ```
 
 ***
-TextChanged event handler (async)
+`TextBox.TextChanged` event handler (async)
 ```
 private async void onTextBoxTextChanged(object sender, EventArgs e)
 {
