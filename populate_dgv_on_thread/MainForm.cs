@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -33,25 +34,30 @@ namespace populate_dgv_on_thread
 
         private async void onTextBoxTextChanged(object sender, EventArgs e)
         {
+            if(string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                return;
+            }
             _queryCount++;
             var queryCountB4 = _queryCount;
             List<Game> recordset = null;
             var captureText = textBox.Text;
-            await Task.Run(() =>
-            {
-                using (var cnx = new SQLiteConnection(ConnectionString))
-                {
-#if TEST_QUERY_REENTRY
-                        Thread.Sleep(1000);
-#endif
-                        var sql = $"SELECT * FROM games WHERE GameID LIKE '{captureText}%'";
-                    recordset = cnx.Query<Game>(sql);
-                }
-            });
 
-            // For efficient updates, only respond to the latest query.
+            // Settling time for rapid typing to cease.
+            await Task.Delay(TimeSpan.FromMilliseconds(250));
+
+            // If keypresses occur in rapid succession, only
+            // respond to the latest one after a settline timeout.
             if (_queryCount.Equals(queryCountB4))
             {
+                await Task.Run(() =>
+                {
+                    using (var cnx = new SQLiteConnection(ConnectionString))
+                    {
+                        var sql = $"SELECT * FROM games WHERE GameID LIKE '{captureText}%'";
+                        recordset = cnx.Query<Game>(sql);
+                    }
+                });
                 DataSource.Clear();
                 foreach (var game in recordset)
                 {

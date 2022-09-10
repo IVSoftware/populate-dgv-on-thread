@@ -1,4 +1,4 @@
-What I would suggest is making a Task whenever the `textbox.Text` changes that will execute a new query on the database, but then only update the `DataGridView` if we're sure all of the pending queries have run. I have mocked this out using `sqlit-net-pcl` for the sake of expediency. The DGV is bound to a `DataSource` that is a `BindingList<Game>`. The `OnLoad` override of `MainForm` initializes the `DataGridView`, then whatever database server you're using. The last thing is to subscribe to the `TextChanged` event and this is where all the where all the action takes place.
+What I would suggest is making an `async` handler for the `textbox.TextChanged` event. Make note of the keystroke count going before awaiting a "cooling off" period for rapid typing. If the count is the same before and after awaiting this delay it indicates that typing is sufficiently stable to perform a query. I have mocked this out using `sqlit-net-pcl` for the sake of expediency. The DGV is bound to a `DataSource` that is a `BindingList<Game>`. The `OnLoad` override of `MainForm` initializes the `DataGridView`, then whatever database server you're using. The last thing is to subscribe to the `TextChanged` event and this is where all the where all the action takes place.
 
 ```        
 protected override void OnLoad(EventArgs e)
@@ -19,25 +19,30 @@ TextChanged event handler (async)
 ```
 private async void onTextBoxTextChanged(object sender, EventArgs e)
 {
+    if(string.IsNullOrWhiteSpace(textBox.Text))
+    {
+        return;
+    }
     _queryCount++;
     var queryCountB4 = _queryCount;
     List<Game> recordset = null;
     var captureText = textBox.Text;
-    await Task.Run(() =>
-    {
-        using (var cnx = new SQLiteConnection(ConnectionString))
-        {
-#if TEST_QUERY_REENTRY
-            Thread.Sleep(1000);
-#endif
-            var sql = $"SELECT * FROM games WHERE GameID LIKE '{captureText}%'";
-            recordset = cnx.Query<Game>(sql);
-        }
-    });
 
-    // For efficient updates, only respond to the latest query.
+    // Settling time for rapid typing to cease.
+    await Task.Delay(TimeSpan.FromMilliseconds(250));
+
+    // If keypresses occur in rapid succession, only
+    // respond to the latest one after a settline timeout.
     if (_queryCount.Equals(queryCountB4))
     {
+        await Task.Run(() =>
+        {
+            using (var cnx = new SQLiteConnection(ConnectionString))
+            {
+                var sql = $"SELECT * FROM games WHERE GameID LIKE '{captureText}%'";
+                recordset = cnx.Query<Game>(sql);
+            }
+        });
         DataSource.Clear();
         foreach (var game in recordset)
         {
