@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "populate_dgv_on_thread", "populate_dgv_on_thread\populate_dgv_on_thread.csproj", "{0FBCF883-9C06-4D23-ABDE-A7485F40E7A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FBCF883-9C06-4D23-ABDE-A7485F40E7A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FBCF883-9C06-4D23-ABDE-A7485F40E7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FBCF883-9C06-4D23-ABDE-A7485F40E7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FBCF883-9C06-4D23-ABDE-A7485F40E7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B9AD92D-4EE8-4CF8-93A8-D8B3E271C74C}
+	EndGlobalSection
+EndGlobal
